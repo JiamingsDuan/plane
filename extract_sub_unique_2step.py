@@ -9,7 +9,7 @@ from tqdm import tqdm
 # parameter
 TABLE = 'HRB_151318_7d'
 STEP = 10
-SLICE = 19
+SLICE = 5
 
 connection = sqlite3.connect('E:/BaiduNetdiskDownload/database/CheckIndata.db')
 query = f"SELECT business_id, class_name, subtraction from HRB_151318_7d_with_group_unique"

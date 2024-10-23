@@ -3,8 +3,7 @@ import pandas as pd
 import os
 from openpyxl import load_workbook
 
-DIR = 'xls/new/'
-
+DIR = 'D:/中国航信/30/'
 
 # load Excel and read sheet
 xls_file_name_lst = os.listdir(DIR)
@@ -15,9 +14,9 @@ for filename in xls_file_name_lst:
     print('从Excel抽取 %s......' % filename)
     CheckInData_0 = pd.read_excel(DIR + '%s.xlsx' % name, dtype={'business_id': str})
     print('写入sqlite数据库 %s.sql......' % name)
-    CheckInData_0.to_sql(name='travelsky_with_type',
+    CheckInData_0.to_sql(name='travelsky%s' % name,
                          con=conn,
-                         if_exists='append',
+                         if_exists='replace',
                          index=False)
 
 conn.close()
