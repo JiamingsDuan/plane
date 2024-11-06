@@ -15,7 +15,7 @@ connection = sqlite3.connect('E:/BaiduNetdiskDownload/database/CheckIndata.db')
 query = f"SELECT business_id, business_time from travelsky_total where eid = '120DT'"
 
 print('extract the data')
-CheckInData = pd.read_sql_query(query, con=connection).head(300000)
+CheckInData = pd.read_sql_query(query, con=connection)
 # print(CheckInData.isnull().sum())
 counter = dict(Counter(CheckInData['business_id']))
 
@@ -69,25 +69,29 @@ ls = CheckInData['business_label'].to_list()
 result_index = find_segments(ls)
 
 print('new a new dataframe')
+
 frame = pd.DataFrame(columns=counter.keys())
-frame.insert(0, '路径标签', ['total'])
-frame.loc[0, :] = counter
-frame.loc[0, '路径标签'] = '总计'
+# frame.insert(0, '路径标签', ['total'])
+# frame.loc[0, :] = counter
+# frame.loc[0, '路径标签'] = '总计'
 
 
 print('write into frame')
+
 for IndexSets in tqdm(result_index):
     # print(IndexSets)
-    startingNode = IndexSets[0]
-    endingNode = IndexSets[-1]
-    startingBusinessID = CheckInData.loc[startingNode, 'business_id']
-    endingBusinessID = CheckInData.loc[endingNode, 'business_id']
+
+    startingBusinessID = CheckInData.loc[IndexSets[0], 'business_id']
+    endingBusinessID = CheckInData.loc[IndexSets[-1], 'business_id']
+    # 判断路径标签
     RouteLabel = determine_label(starting=startingBusinessID, ending=endingBusinessID)
-    Route = CheckInData.loc[startingNode: endingNode, 'business_id'].to_list()
-    Route = find_adjacent_duplicates(Route)
-    route_counter = dict(Counter(Route))
-    route_counter['路径标签'] = RouteLabel
-    frame.loc[frame.shape[0], :] = route_counter
+    # 提取路径内容
+    Route = CheckInData.loc[IndexSets[0]: IndexSets[-1], 'business_id'].to_list()
+
+    # Route = find_adjacent_duplicates(Route)
+    # route_counter = dict(Counter(Route))
+    # route_counter['路径标签'] = RouteLabel
+    # frame.loc[frame.shape[0], :] = route_counter
 
 
 print('save frame to the excel')

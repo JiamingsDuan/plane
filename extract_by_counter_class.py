@@ -5,12 +5,13 @@ from tqdm import tqdm
 from collections import Counter
 
 # parameter
-COUNTER = '120DT'
+eid_name = '014AO'
+table_name = 'travelsky_%s_with_group' % eid_name
 connection = sqlite3.connect('E:/BaiduNetdiskDownload/database/CheckIndata.db',
                              detect_types=sqlite3.PARSE_DECLTYPES,
                              check_same_thread=False)
 connection.text_factory = str
-query = f"SELECT business_id, business_time from travelsky_total where eid = '120DT'"
+query = f"SELECT business_id, business_time from travelsky_total where eid = %s" % eid_name
 
 print('extract the data......')
 CheckInData = pd.read_sql_query(query, con=connection)
@@ -18,7 +19,7 @@ CheckInData = pd.read_sql_query(query, con=connection)
 counter = dict(Counter(CheckInData['business_id']))
 
 
-query1 = "SELECT class_name, business_id, business_class from BusinessClass0927"
+query1 = "SELECT class_name, business_id, business_class from BusinessClass1016"
 BusinessIdClassData = pd.read_sql_query(query1, con=connection, dtype={'business_id': 'str',
                                                                        'business_class': 'str',
                                                                        })
@@ -85,13 +86,14 @@ print('slice the basic route')
 CheckInData['business_label'] = label_list
 
 print('write the data to Sqlite......')
-CheckInData.to_sql(name='travelsky_120DT_with_group_1',
+CheckInData.to_sql(name=table_name,
                    con=connection,
                    if_exists='replace',
                    index=False,
                    )
 connection.close()
-print(CheckInData.isnull().sum())
+
+# print(CheckInData.isnull().sum())
 
 # print('write the data to xlsx file......')
 # CheckInData.to_excel('xls/travelsky_120DT_with_group.xlsx', index=False)
