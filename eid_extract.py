@@ -12,11 +12,12 @@ from tqdm import tqdm
 '''
 
 # eid_name = '09058'
+
 eid_list = [
-    #     '07089', '088OJ', '0904C', '0904H', '0904Q', '0904U', '09053', '09058',
-    '09059', '0905E', '094D9', '094DI', '094DC', '094HR', '094HU', '094HY', '120CG', '120DT', '120IK',
-    '120IN', '120IQ', '120IX', '12101', '130CC', '132FH', '1348V', '1348X', '13490', '13493', '13496',
-    '13498', '144GR', '198IB', '198IE', '198IH', '198IK', '198IL', '198IN', '198IT', '198IW', '198IZ',
+    '07089', '0904C', '0904H', '0904Q', '0904U', '09053', '09059', '0905E', '094D9',
+    '094DI', '094DC', '094HR', '094HU', '094HY', '120CG', '120IK', '120IN',
+    '120IQ', '120IX', '12101', '130CC', '1348V', '1348X', '13490', '13493', '13498',
+    '144GR', '198IE', '198IH', '198IL', '198IN', '198IT', '198IW', '198IZ',
 ]
 
 for eid_name in eid_list:
@@ -33,24 +34,24 @@ for eid_name in eid_list:
 
     # print(CheckInData.isnull().sum())
     print('extract the Business Id Class')
-    query1 = "SELECT class_name, business_id, business_class from BusinessClass1016"
+    query1 = "SELECT class_name, business_id, business_class, business_short from BusinessClass1108"
     BusinessIdClassData = pd.read_sql_query(query1, con=connection, dtype={'business_id': 'str',
                                                                            'business_class': 'str',
                                                                            'class_name': 'str',
                                                                            })
 
     print('mark business_class、class_name......')
-    CheckInData[['business_class', 'class_name']] = ''
+    CheckInData[['business_class', 'class_name', 'business_short']] = ''
 
     # Business_Part:mark 'business_class', 'class_name'
     for index in tqdm(range(CheckInData.shape[0])):
         business_id = CheckInData.loc[index, 'business_id']
         if business_id in BusinessIdClassData['business_id'].to_list():
             class_index = BusinessIdClassData[BusinessIdClassData['business_id'] == business_id].index[0]
-            series = BusinessIdClassData.loc[class_index, ['business_class', 'class_name']]
-            CheckInData.loc[index, ['business_class', 'class_name']] = series
+            series = BusinessIdClassData.loc[class_index, ['business_class', 'class_name', 'business_short']]
+            CheckInData.loc[index, ['business_class', 'class_name', 'business_short']] = series
         else:
-            CheckInData.loc[index, ['business_class', 'class_name']] = None
+            CheckInData.loc[index, ['business_class', 'class_name', 'business_short']] = None
 
     # initialize the starting node and ending node
     start_list = ['042E0102', '042E0105', '042E0115',
