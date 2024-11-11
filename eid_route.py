@@ -29,7 +29,7 @@ eid_list = [
 for eid in eid_list:
     print('slice the %s' % eid)
     TABLE = 'travelsky_%s_with_group' % eid
-    FILE = 'csv/travelsky_%s_with_group.csv' % eid
+    FILE = 'csv/zuh/travelsky_%s_with_group.csv' % eid
     connection = sqlite3.connect('E:/BaiduNetdiskDownload/database/CheckIndata.db')
     query = f"SELECT business_id, business_short, business_label, class_name from {TABLE}"
 
